@@ -1,0 +1,34 @@
+#!name=❒基础模块
+#!desc=▌boxjs、sub.store、Script Hub、IPA应用辅助安装器、TestFlight账户管理
+#!author=诸神
+#!date=1月12日01:56
+
+[General]
+force-http-engine-hosts = %APPEND% boxjs.com, boxjs.net, *.boxjs.com, *.boxjs.net, script.hub, *.script.hub
+
+skip-proxy = %APPEND% iosapps.itunes.apple.com
+
+[MITM]
+hostname = %INSERT% boxjs.com, boxjs.net, *.boxjs.com, *.boxjs.net, sub.store, script.hub, *.script.hub, nobyda.app, testflight.apple.com
+
+[Script]
+Rewrite: BoxJs = type=http-request, pattern=^https?:\/\/(.+\.)?boxjs\.(com|net), script-path=https://raw.githubusercontent.com/chavyleung/scripts/master/box/chavy.boxjs.js, requires-body=true, timeout=120
+
+# 主程序 已经去掉 Sub-Store Core 的参数 [,ability=http-client-policy] 不会爆内存，这个参数在 Surge 非常占用内存； 如果不需要使用指定节点功能 例如[加国旗脚本或者cname脚本] 则可以使用此脚本
+Sub-Store Core = type=http-request, pattern=^https?:\/\/sub\.store\/((download)|api\/(preview|sync|(utils\/node-info))), script-path=https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-1.min.js, requires-body=true, timeout=120
+
+Sub-Store Simple = type=http-request, pattern=^https?:\/\/sub\.store, script-path=https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js, requires-body=true
+
+Sub-Store Sync = type=cron, cronexp="0 0 * * *", script-path=https://github.com/sub-store-org/Sub-Store/releases/latest/download/cron-sync-artifacts.min.js, timeout=120, wake-system=1
+
+Script Hub: 前端 = type=http-request, pattern=^https?:\/\/script\.hub\/($|edit\/|reload), script-path=https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/script-hub.js, timeout=300
+
+Script Hub: 重写转换 = type=http-request, pattern=^https?:\/\/script\.hub\/file\/_start_\/.+type=(?:qx-rewrite|surge-module|loon-plugin|all-module), script-path=https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/Rewrite-Parser.js, timeout=300
+
+Script Hub: 规则集转换 = type=http-request, pattern=^https?:\/\/script\.hub\/file\/_start_\/.+type=rule-set, script-path=https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/rule-parser.js, timeout=300
+
+Script Hub: 脚本转换 = type=http-request, pattern=^https?:\/\/script\.hub\/convert\/, script-path=https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/script-converter.js, timeout=300
+
+IPA Installer = type=http-request, pattern=^https:\/\/nobyda.app/(install|download), script-path=https://raw.githubusercontent.com/NobyDa/Script/master/IPA-Installer/IPA-Installer.js, requires-body=true
+
+TestFlight账户管理 = type=http-request, pattern=^https:\/\/testflight\.apple\.com\/v\d\/(app|account|invite)s\/, script-path=https://raw.githubusercontent.com/NobyDa/Script/master/TestFlight/TestFlightAccount.js, requires-body=true
